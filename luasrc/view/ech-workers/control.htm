@@ -68,16 +68,16 @@
             <%:服务控制%>
         </h4>
 
-        <button class="ech-btn ech-btn-start" onclick="echControl('start')">
+        <button type="button" class="ech-btn ech-btn-start" onclick="echControl('start')">
             <%:启动%>
         </button>
-        <button class="ech-btn ech-btn-stop" onclick="echControl('stop')">
+        <button type="button" class="ech-btn ech-btn-stop" onclick="echControl('stop')">
             <%:停止%>
         </button>
-        <button class="ech-btn ech-btn-restart" onclick="echControl('restart')">
+        <button type="button" class="ech-btn ech-btn-restart" onclick="echControl('restart')">
             <%:重启%>
         </button>
-        <button class="ech-btn ech-btn-log" onclick="toggleLog()">
+        <button type="button" class="ech-btn ech-btn-log" id="log_toggle_btn" onclick="toggleLog()">
             <%:查看日志%>
         </button>
 
@@ -107,9 +107,12 @@
         function toggleLog() {
             var logBox = document.getElementById('ech_log_box');
             var logContent = document.getElementById('ech_log_content');
+            var toggleBtn = document.getElementById('log_toggle_btn');
 
             if (logBox.style.display === 'none' || logBox.style.display === '') {
                 logBox.style.display = 'block';
+                toggleBtn.textContent = '<%:隐藏日志%>';
+                logContent.textContent = '<%:加载中...%>';
                 XHR.get('<%=luci.dispatcher.build_url("admin", "services", "ech-workers", "log")%>', null,
                     function (x) {
                         logContent.textContent = x.responseText || '<%:无日志%>';
@@ -117,6 +120,7 @@
                 );
             } else {
                 logBox.style.display = 'none';
+                toggleBtn.textContent = '<%:查看日志%>';
             }
         }
         //]]>

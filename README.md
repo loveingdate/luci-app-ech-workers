@@ -21,6 +21,18 @@ OpenWrt LuCI 图形界面配置应用，用于管理 [ECH Workers](https://githu
 
 ---
 
+## 📸 界面截图
+
+### 配置界面
+
+![配置界面](doc/index.png)
+
+### 日志查看
+
+![日志查看](doc/log.png)
+
+---
+
 ## 📦 安装方法
 
 ### 下载预编译包
