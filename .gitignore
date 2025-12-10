@@ -1,0 +1,22 @@
+# Build output
+build/
+*.ipk
+build_ipk.sh
+
+# macOS
+.DS_Store
+._*
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak

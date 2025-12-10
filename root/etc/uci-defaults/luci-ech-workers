@@ -1,0 +1,13 @@
+#!/bin/sh
+# 首次安装时的初始化脚本
+
+# 确保配置文件存在
+[ -f /etc/config/ech-workers ] || touch /etc/config/ech-workers
+
+# 设置 init 脚本权限
+chmod +x /etc/init.d/ech-workers 2>/dev/null
+
+# 清除 LuCI 缓存
+rm -rf /tmp/luci-modulecache /tmp/luci-indexcache 2>/dev/null
+
+exit 0

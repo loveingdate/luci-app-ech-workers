@@ -1,0 +1,69 @@
+#!/bin/sh /etc/rc.common
+# ECH Workers Proxy Service
+# procd init script
+
+USE_PROCD=1
+START=99
+STOP=10
+
+NAME="ech-workers"
+BIN="/usr/bin/ech-workers"
+
+start_service() {
+    config_load "$NAME"
+    
+    local enabled server_addr listen_addr token best_ip dns ech_domain routing
+    
+    config_get enabled "config" "enabled" "0"
+    [ "$enabled" = "1" ] || return 0
+    
+    config_get server_addr "config" "server_addr" ""
+    [ -z "$server_addr" ] && {
+        logger -t "$NAME" "服务器地址未配置"
+        return 1
+    }
+    
+    config_get listen_addr "config" "listen_addr" "0.0.0.0:30001"
+    config_get token "config" "token" ""
+    config_get best_ip "config" "best_ip" ""
+    config_get dns "config" "dns" "dns.alidns.com/dns-query"
+    config_get ech_domain "config" "ech_domain" "cloudflare-ech.com"
+    config_get routing "config" "routing" "global"
+    
+    [ ! -x "$BIN" ] && {
+        logger -t "$NAME" "二进制文件不存在: $BIN"
+        return 1
+    }
+    
+    procd_open_instance "$NAME"
+    procd_set_param command "$BIN"
+    procd_append_param command -f "$server_addr"
+    procd_append_param command -l "$listen_addr"
+    
+    [ -n "$token" ] && procd_append_param command -token "$token"
+    [ -n "$best_ip" ] && procd_append_param command -ip "$best_ip"
+    [ -n "$dns" ] && procd_append_param command -dns "$dns"
+    [ -n "$ech_domain" ] && procd_append_param command -ech "$ech_domain"
+    [ -n "$routing" ] && procd_append_param command -routing "$routing"
+    
+    procd_set_param respawn "${respawn_threshold:-3600}" "${respawn_timeout:-5}" "${respawn_retry:-5}"
+    procd_set_param stdout 1
+    procd_set_param stderr 1
+    procd_set_param file /etc/config/ech-workers
+    procd_close_instance
+    
+    logger -t "$NAME" "服务已启动"
+}
+
+stop_service() {
+    logger -t "$NAME" "服务已停止"
+}
+
+service_triggers() {
+    procd_add_reload_trigger "$NAME"
+}
+
+reload_service() {
+    stop
+    start
+}
